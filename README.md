@@ -1,31 +1,38 @@
-This is my data pipeline
+Here’s what `fetch_recent_ai_papers.py` does, step by step:
 
-## Unit converter script
+- **Resolve the AI concept**  
+  - Calls `get_ai_concept_id()` which:
+    - Uses `Concepts().search("Artificial Intelligence").get(per_page=1)` to find the AI concept in OpenAlex.
+    - Extracts its `id` and normalizes it to the short form (e.g. `C41008148`).
 
-You can convert between common metric and imperial units using `unit_converter.py`.
+- **Query recent AI works from OpenAlex**  
+  - `fetch_recent_ai_works(...)`:
+    - Computes a date range: today and `today - 3 days`.
+    - Builds a `Works()` query with:
+      - `search_filter(title="artificial intelligence")` (title contains this term).
+      - `.filter(concepts={"id": concept_id})` (tagged with the AI concept).
+      - `.filter(from_publication_date=...)` and `.filter(to_publication_date=...)` (last 3 days).
+      - `.filter(type="article")` (only articles).
+    - Uses `paginate(per_page=200, n_max=None)` to fetch **all matching works** page by page.
+    - Calls `query.count()` to get `expected_count` from OpenAlex.
+    - Builds a `meta` dict with:
+      - Concept ID
+      - Date range
+      - `expected_count` vs `fetched_count`
+      - `generated_at` timestamp (UTC, ISO8601).
+    - Returns `(works, meta)`.
 
-### Usage
+- **Write timestamped JSON output**  
+  - `save_works_to_timestamped_file(works, meta)`:
+    - Ensures `temp/` exists.
+    - Creates a filename like `temp/ai_works_YYYYMMDD_HHMMSS.json`.
+    - Writes a JSON object:
+      - `"meta": {...}` (metadata above).
+      - `"results": [...]` (list of all work dicts).
 
-- **Length** (m, km, ft, in, mi)
-
-  ```bash
-  python unit_converter.py length --from m --to ft --value 3
-  ```
-
-- **Weight** (kg, g, lb, oz)
-
-  ```bash
-  python unit_converter.py weight --from kg --to lb --value 5
-  ```
-
-- **Temperature** (c, f)
-
-  ```bash
-  python unit_converter.py temperature --from c --to f --value 20
-  ```
-
-- **Volume** (l, ml, gal, fl_oz)
-
-  ```bash
-  python unit_converter.py volume --from l --to gal --value 2
-  ```
+- **Script entry point / API key handling**  
+  - `main()`:
+    - Reads `OPENALEX_API_KEY` from the environment; fails with a clear error if missing.
+    - Configures `pyalex.config.api_key`.
+    - Calls `get_ai_concept_id()`, `fetch_recent_ai_works(...)`, and `save_works_to_timestamped_file(...)`.
+    - Prints a summary line with how many works were saved and the `expected_count`.
