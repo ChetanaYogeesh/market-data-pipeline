@@ -3,7 +3,6 @@
 This project demonstrates how to build a modern data pipeline in Python, with a clean project structure, reproducible environments, and AI-assisted development using Cursor.
 
 ---
-
 ## Vibe Coding Setup Checklist: Essential Tools for AI Data Pipeline Projects
 
 Before starting to build your AI-powered data pipeline, you'll need to set up accounts for four essential services. Each provides free tiers that are perfect for learning and development.
