@@ -6,9 +6,7 @@ from dotenv import load_dotenv
 
 
 NEON_BASE_URL = (
-    "postgresql://neondb_owner:{password}"
-    "@ep-shiny-paper-adu906me-pooler.c-2.us-east-1.aws.neon.tech"
-    "/neondb?sslmode=require&channel_binding=require"
+    "postgresql://neondb_owner:{password}@ep-shiny-paper-adu906me-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 )
 
 
@@ -34,5 +32,52 @@ def get_neon_connection():
     return psycopg2.connect(dsn)
 
 
-__all__ = ["get_neon_connection"]
+def create_papers_table() -> None:
+    """
+    Create the simplified `papers` table in the Neon database if it does not exist.
+    """
+    conn = get_neon_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                CREATE TABLE IF NOT EXISTS papers (
+                    id TEXT PRIMARY KEY,
+                    doi TEXT,
+                    title TEXT NOT NULL,
+                    abstract TEXT,
+                    publication_date DATE,
+                    publication_year INTEGER,
+                    created_date TIMESTAMPTZ,
+                    updated_date TIMESTAMPTZ,
+                    type TEXT,
+                    language TEXT,
+                    cited_by_count INTEGER,
+                    citation_percentile NUMERIC,
+                    fwci NUMERIC,
+                    is_oa BOOLEAN,
+                    oa_status TEXT,
+                    oa_url TEXT,
+                    primary_topic_id TEXT,
+                    primary_topic_name TEXT,
+                    primary_domain TEXT,
+                    primary_field TEXT,
+                    primary_subfield TEXT,
+                    ai_concept_score NUMERIC,
+                    countries_distinct_count INTEGER,
+                    institutions_distinct_count INTEGER,
+                    has_fulltext BOOLEAN,
+                    is_retracted BOOLEAN,
+                    is_paratext BOOLEAN,
+                    relevance_score NUMERIC
+                );
+                """
+            )
+        conn.commit()
+    finally:
+        conn.close()
+
+
+__all__ = ["get_neon_connection", "create_papers_table"]
+
 
