@@ -191,3 +191,95 @@ The architecture prioritizes data quality and reliability through multiple safeg
 - The accompanying **Streamlit dashboard** connects directly to the database for real-time data visualization and can be deployed to the web for public access.
 
 This end-to-end solution demonstrates how AI-assisted development can rapidly create sophisticated data infrastructure that would traditionally require extensive manual coding and configuration.
+
+---
+
+## Data quality report for `papers` table
+
+This project includes a lightweight data quality framework for the `papers` table, built around a summary SQL query and a small Python runner.
+
+### What is checked
+
+- **Completeness**
+  - **Missing IDs**: rows where `id` is NULL.
+  - **Missing titles**: rows where `title` is NULL or empty.
+  - **Missing primary topic**: rows where `primary_topic_id` is NULL.
+
+- **Citations**
+  - **Negative citations**: `cited_by_count < 0`.
+  - **Extreme citations**: `cited_by_count > 100000` (outliers to be reviewed).
+
+- **Dates**
+  - **Publication after created date**: cases where `publication_date > created_date`.
+
+- **Duplicates (identifiers only)**
+  - **Duplicate IDs**: multiple rows with the same `id` (should be zero, since `id` is the primary key).
+  - **Duplicate DOIs**: multiple rows sharing the same `doi` (potential true duplicates or versioning issues).
+
+- **Scores**
+  - **AI concept score range**: `ai_concept_score` values that fall outside the expected \[0, 1] range.
+
+### SQL summary used
+
+The core report is computed with a single SQL query:
+
+```sql
+SELECT
+  COUNT(*) AS total_papers,
+
+  -- Missing required fields
+  COUNT(*) FILTER (WHERE id IS NULL) AS missing_id,
+  COUNT(*) FILTER (WHERE title IS NULL OR title = '') AS missing_title,
+
+  -- Citation anomalies
+  COUNT(*) FILTER (WHERE cited_by_count < 0) AS negative_citations,
+  COUNT(*) FILTER (WHERE cited_by_count > 100000) AS extreme_citations,
+
+  -- Date inconsistencies
+  COUNT(*) FILTER (
+    WHERE publication_date IS NOT NULL
+      AND created_date IS NOT NULL
+      AND publication_date > created_date
+  ) AS pub_after_created,
+
+  -- Duplicate identifiers
+  (
+    SELECT COUNT(*) FROM (
+      SELECT id
+      FROM papers
+      GROUP BY id
+      HAVING COUNT(*) > 1
+    ) AS dup_ids
+  ) AS duplicate_id_groups,
+
+  (
+    SELECT COUNT(*) FROM (
+      SELECT doi
+      FROM papers
+      WHERE doi IS NOT NULL
+      GROUP BY doi
+      HAVING COUNT(*) > 1
+    ) AS dup_dois
+  ) AS duplicate_doi_groups,
+
+  -- Topic coverage
+  COUNT(*) FILTER (WHERE primary_topic_id IS NULL) AS missing_primary_topic,
+
+  -- AI concept score range check
+  COUNT(*) FILTER (
+    WHERE ai_concept_score IS NOT NULL
+      AND (ai_concept_score < 0 OR ai_concept_score > 1)
+  ) AS bad_ai_concept_score
+FROM papers;
+```
+
+### Running the report
+
+- **Python helper**: run the summary and print a human-readable report:
+
+```bash
+source venv/bin/activate
+python run_data_quality.py
+```
+
+This script uses `database.get_neon_connection()` to connect to Neon, executes the summary SQL, and prints total counts plus each data quality metric.
