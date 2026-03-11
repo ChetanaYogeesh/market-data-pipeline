@@ -4,6 +4,71 @@ This project demonstrates how to build a modern data pipeline in Python, with a 
 
 ---
 
+## Vibe Coding Setup Checklist: Essential Tools for AI Data Pipeline Projects
+
+Before starting to build your AI-powered data pipeline, you'll need to set up accounts for four essential services. Each provides free tiers that are perfect for learning and development.
+
+### GitHub account
+
+GitHub will host your code repository and integrate with Streamlit for deployment. It's essential for version control and collaboration.
+
+**Setup steps:**
+
+1. Visit `https://github.com` and create a free account.
+2. Verify your email address.
+
+### Streamlit account
+
+It’s easy to use Streamlit to build and deploy data visualization dashboards with Python. Streamlit’s free tier includes cloud hosting.
+
+**Setup steps:**
+
+1. Go to `https://streamlit.io` and sign up with your GitHub account; this automatically links your repositories for easy deployment.
+2. Verify your email address.
+3. Explore the dashboard to familiarize yourself with the interface.
+4. No API keys are needed; GitHub integration handles authentication.
+
+### Cursor IDE setup
+
+Cursor is an AI-powered code editor that can dramatically speed up your development process. It provides intelligent code completion and AI assistance.
+
+**Setup steps:**
+
+1. Download Cursor from `https://cursor.sh`.
+2. Install the application on your system.
+3. Sign up for a free account when prompted.
+
+### Neon database account
+
+Neon provides serverless PostgreSQL databases with a generous free tier that will store and process your pipeline data.
+
+**Setup steps:**
+
+1. Visit `https://neon.tech` and create an account.
+2. Create your first database project.
+3. Choose your preferred region for optimal performance.
+
+### Verification checklist
+
+Before proceeding, ensure you have:
+
+- **GitHub** account
+- **Streamlit** account linked to GitHub
+- **Cursor IDE** installed and configured
+- **Neon database** created with connection details
+
+### Quick start tips
+
+**Security best practices:**
+
+- **Never commit API keys** to version control.
+- **Use environment variables** for sensitive data.
+- **Keep a secure backup** of all credentials.
+
+With these tools configured, you're ready to start building your AI-powered data pipeline. The combination of real-time data, intelligent development tools, cloud database, and easy deployment makes this a powerful stack for data engineering projects.
+
+---
+
 ## Version control with GitHub
 
 Always maintain a remote repository for your data pipeline project and commit changes regularly. This provides backup, enables collaboration, and creates a history of your development progress.
@@ -127,42 +192,3 @@ The architecture prioritizes data quality and reliability through multiple safeg
 - The accompanying **Streamlit dashboard** connects directly to the database for real-time data visualization and can be deployed to the web for public access.
 
 This end-to-end solution demonstrates how AI-assisted development can rapidly create sophisticated data infrastructure that would traditionally require extensive manual coding and configuration.
-
-Here’s what fetch_recent_ai_papers.py does, step by step:
-
-    Resolve the AI concept
-        Calls get_ai_concept_id() which:
-            Uses Concepts().search("Artificial Intelligence").get(per_page=1) to find the AI concept in OpenAlex.
-            Extracts its id and normalizes it to the short form (e.g. C41008148).
-
-    Query recent AI works from OpenAlex
-        fetch_recent_ai_works(...):
-            Computes a date range: today and today - 3 days.
-            Builds a Works() query with:
-                search_filter(title="artificial intelligence") (title contains this term).
-                .filter(concepts={"id": concept_id}) (tagged with the AI concept).
-                .filter(from_publication_date=...) and .filter(to_publication_date=...) (last 3 days).
-                .filter(type="article") (only articles).
-            Uses paginate(per_page=200, n_max=None) to fetch all matching works page by page.
-            Calls query.count() to get expected_count from OpenAlex.
-            Builds a meta dict with:
-                Concept ID
-                Date range
-                expected_count vs fetched_count
-                generated_at timestamp (UTC, ISO8601).
-            Returns (works, meta).
-
-    Write timestamped JSON output
-        save_works_to_timestamped_file(works, meta):
-            Ensures temp/ exists.
-            Creates a filename like temp/ai_works_YYYYMMDD_HHMMSS.json.
-            Writes a JSON object:
-                "meta": {...} (metadata above).
-                "results": [...] (list of all work dicts).
-
-    Script entry point / API key handling
-        main():
-            Reads OPENALEX_API_KEY from the environment; fails with a clear error if missing.
-            Configures pyalex.config.api_key.
-            Calls get_ai_concept_id(), fetch_recent_ai_works(...), and save_works_to_timestamped_file(...).
-            Prints a summary line with how many works were saved and the expected_count.
