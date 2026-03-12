@@ -1,9 +1,13 @@
-<img width="983" height="967" alt="Dashboard" src="https://github.com/user-attachments/assets/edf2cf2a-3235-45ed-81a8-98cd349361e3" />
+# Market Data Pipeline – AI Academic Papers Tracker
 
 https://market-data-pipeline-6u2ncxrf6rctktgzwaluzv.streamlit.app/
 
+<img width="983" height="967" alt="Dashboard" src="https://github.com/user-attachments/assets/edf2cf2a-3235-45ed-81a8-98cd349361e3" />
+
+
+
 ```markdown
-# Market Data Pipeline – AI Academic Papers Tracker
+
 
 *(Modern ETL pipeline fetching AI-related papers from OpenAlex → PostgreSQL (Neon) → Streamlit Dashboard)*
 
