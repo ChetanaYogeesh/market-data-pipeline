@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from database import get_neon_connection
+from .database import get_neon_connection
 
 
 def _short_openalex_id(url: Optional[str]) -> Optional[str]:
@@ -188,7 +188,7 @@ def extract_sdgs(work: Dict[str, Any], paper_id: str) -> List[Tuple]:
 
 
 def ensure_schema(conn) -> None:
-    schema_path = Path("schema.sql")
+    schema_path = Path("sql") / "schema.sql"
     with schema_path.open(encoding="utf-8") as f:
         sql = f.read()
     with conn.cursor() as cur:

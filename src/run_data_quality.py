@@ -1,6 +1,6 @@
 from textwrap import dedent
 
-from database import get_neon_connection
+from .database import get_neon_connection
 
 
 SUMMARY_SQL = dedent(

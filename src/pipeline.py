@@ -4,10 +4,14 @@ from typing import Optional
 
 import pyalex
 
-from database import get_neon_connection, create_papers_table
-from fetch_recent_ai_papers import get_ai_concept_id, fetch_recent_ai_works, save_works_to_timestamped_file
-from load_papers import load_works_from_file, upsert_paper, ensure_schema
-from run_data_quality import SUMMARY_SQL
+from .database import get_neon_connection, create_papers_table
+from .fetch_recent_ai_papers import (
+    get_ai_concept_id,
+    fetch_recent_ai_works,
+    save_works_to_timestamped_file,
+)
+from .load_papers import load_works_from_file, upsert_paper, ensure_schema
+from .run_data_quality import SUMMARY_SQL
 
 
 class AIPapersPipeline:
