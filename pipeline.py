@@ -19,7 +19,7 @@ class AIPapersPipeline:
     - Running a data quality summary report
     """
 
-    def __init__(self, days: int = 3, title_search: Optional[str] = "artificial intelligence"):
+    def __init__(self, days: int = 30, title_search: Optional[str] = "artificial intelligence"):
         self.days = days
         self.title_search = title_search
 
@@ -146,6 +146,6 @@ class AIPapersPipeline:
 
 
 if __name__ == "__main__":
-    pipeline = AIPapersPipeline(days=3)
+    pipeline = AIPapersPipeline()
     pipeline.run()
 
