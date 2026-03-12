@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from src.database import get_neon_connection
+from .database import get_neon_connection
 
 
 @st.cache_data(show_spinner=False)
