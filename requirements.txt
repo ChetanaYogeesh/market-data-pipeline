@@ -1,6 +1,7 @@
 streamlit==1.55.0
 pyalex==0.18
-pandas==2.0.3
-requests==2.31.0
-psycopg2-binary==2.9.7
-python-dotenv==1.0.1
+pandas>=2.3.3               # or >=3.0.0 if possible
+psycopg2-binary>=2.9.9      # or no version pin
+python-dotenv
+requests
+setuptools                  # usually not needed, but harmless
