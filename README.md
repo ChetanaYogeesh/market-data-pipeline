@@ -4,11 +4,6 @@ https://market-data-pipeline-6u2ncxrf6rctktgzwaluzv.streamlit.app/
 
 <img width="983" height="967" alt="Dashboard" src="https://github.com/user-attachments/assets/edf2cf2a-3235-45ed-81a8-98cd349361e3" />
 
-
-
-```markdown
-
-
 *(Modern ETL pipeline fetching AI-related papers from OpenAlex → PostgreSQL (Neon) → Streamlit Dashboard)*
 
 This project demonstrates a clean, production-ready **Python data pipeline** that:
@@ -137,8 +132,6 @@ Modern ETL layers with separation of concerns:
 - Deduplication logic
 - Comprehensive checks (missing fields, negative citations, date anomalies, etc.)
 - Environment variable secrets
-
-### Flow Diagram
 
 ### Flow Diagram
 
